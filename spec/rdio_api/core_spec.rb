@@ -43,6 +43,18 @@ describe RdioApi::Client do
         end
       end
       
+      describe '"get_object_from_url"' do
+        before do
+          stub_post.with(:body => {:method => 'getObjectFromUrl', :url => "/artist/James_Horner/" }).
+            to_return(:body => fixture("getObjectFromUrl.json"))
+        end
+        
+        it "should have the current topSongsKey" do
+          results = @client.get_object_from_url(:url => "/artist/James_Horner/")
+          results.topSongsKey.should eq("tr35187")
+        end
+      end
+      
       describe "'getObjectFromUrl'" do
         before do
           stub_post.with(:body => {:method => 'getObjectFromUrl', :url => "/artist/James_Horner/" }).

@@ -6,6 +6,8 @@ module RdioApi
   module Api
 
     def method_missing(method_sym, *arguments)
+      method_sym = camelize(method_sym.to_s).to_sym
+      
       if UNAUTHENTICATED.include?(method_sym)
         unauthenticated_request(method_sym, *arguments)
       elsif AUTHENTICATED.include?(method_sym)
@@ -33,6 +35,14 @@ module RdioApi
         request.body = {:method => method_sym.to_s}.merge!(Hash[*arguments.flatten])
       end
       response.body.result
+    end
+    
+    def camelize(method)
+      return method if method !~ /_/ && method =~ /[A-Z]+.*/
+      
+      method.split('_').inject([]) { |buffer, e| 
+        buffer.push(buffer.empty? ? e : e.capitalize)
+      }.join
     end
 
     UNAUTHENTICATED = [
